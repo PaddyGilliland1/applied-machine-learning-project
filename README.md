@@ -73,6 +73,9 @@ These steps assume Python 3 and Git are installed.
    jupyter notebook modeling.ipynb
    ```
 
+A full run takes about seven minutes on a CPU. It writes its five figures, the metrics table,
+the table of merged labels and a short model card to `outputs/`, beside the notebook.
+
 ## How requirements.txt was created
 
 The notebook was run top to bottom in a fresh virtual environment, and the file was then written
