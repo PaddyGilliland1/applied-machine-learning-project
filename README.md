@@ -29,12 +29,13 @@ python build_dataset.py
 
 It first checks every original against its SHA-256 in the manifest, and stops without writing
 anything if a file is missing, extra or changed. It reads each file with the encoding in the
-manifest: UTF-8 for January and February 2025, which start with a byte-order mark, and cp1252 for
-the other 46 months. Most files put spaces around some column names, and seven months name some
-columns differently, so it maps every header to one set of names. It adds a `source_file` column
-naming the original file of each row. It does not clean, filter or reorder anything. The combined
-file holds all 126,346 rows of the originals, including 657 blank rows in May 2022, and the
-script writes the same bytes on every run.
+manifest: UTF-8 for January and February 2025, which start with a byte-order mark, cp850 for
+April, July and August 2023, and cp1252 for the other 43 months. The three cp850 files store the
+pound sign as a byte that cp1252 would read as œ. Most files put spaces around some column names,
+and five months name some columns differently, so it maps every header to one set of names. It
+adds a `source_file` column naming the original file of each row. It does not clean, filter or
+reorder anything. The combined file holds all 126,346 rows of the originals, including 657 blank
+rows in May 2022, and the script writes the same bytes on every run.
 
 Contains public sector information licensed under the Open Government Licence v3.0.
 

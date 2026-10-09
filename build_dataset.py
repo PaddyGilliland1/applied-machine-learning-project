@@ -7,8 +7,10 @@ per month. This script stacks the 48 months from April 2022 to March 2026,
 kept unchanged in dft_originals/, into one UTF-8 CSV beside the notebook.
 Before reading any rows it checks every original's SHA-256 and size against
 dft_originals/MANIFEST.csv, and it refuses a missing or extra file. It reads
-each file with the encoding the manifest gives, maps the header variants to
-one set of column names, and adds a source_file column naming the original.
+each file with the encoding the manifest gives: UTF-8 for January and
+February 2025, cp850 for April, July and August 2023, whose pound sign is
+byte 0x9C, and cp1252 for the rest. It maps the header variants to one set of
+column names, and adds a source_file column naming the original.
 Nothing else changes: no cell is cleaned, no row is dropped (blank rows
 included), and the rows keep their order. The output is the same bytes on
 every run. Standard library only.
@@ -28,7 +30,7 @@ ORIGINALS = HERE / "dft_originals"
 MANIFEST_NAME = "MANIFEST.csv"
 COMBINED_NAME = "dft_spend_over_25k_2022-04_to_2026-03.csv"
 
-# The column names as 41 of the 48 files have them, once surrounding spaces
+# The column names as 43 of the 48 files have them, once surrounding spaces
 # are stripped.
 SCHEMA = [
     "Department Family",
@@ -44,15 +46,11 @@ SCHEMA = [
 ]
 SOURCE_COLUMN = "source_file"
 
-# The other seven files name some columns differently. Three of them (April,
-# July and August 2023) store the pound sign as byte 0x9C, which is £ in the
-# DOS code pages 437 and 850 but œ in cp1252, so their amount header reads œ.
-# Only the header is mapped; their cells keep the character as read.
+# The other five files name some columns differently.
 RENAMES = {
     "Departmental Family": "Department Family",
     "Expense Area rev": "Expense Area",
     "Transaction Number": "Transaction No",
-    "œ": "£",
 }
 
 
