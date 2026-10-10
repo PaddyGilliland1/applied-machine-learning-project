@@ -93,7 +93,3 @@ from that environment with:
 ```bash
 pip freeze > requirements.txt
 ```
-
-## Reflections
-
-[TO WRITE: one ### heading per reflection question in the brief, each answered in your own words.]
