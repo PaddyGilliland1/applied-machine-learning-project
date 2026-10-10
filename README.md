@@ -60,7 +60,13 @@ both.
 These steps assume Python 3.12 or later and Git are installed. The notebook was run on Python
 3.12.3, and the NumPy and SciPy versions in `requirements.txt` need Python 3.12 or later.
 
-1. Clone this repository and move into its folder.
+1. Clone the repository and move into its folder:
+
+   ```bash
+   git clone https://github.com/PaddyGilliland1/applied-machine-learning-project.git
+   cd applied-machine-learning-project
+   ```
+
 2. Create and activate a virtual environment:
 
    ```bash
@@ -82,9 +88,10 @@ These steps assume Python 3.12 or later and Git are installed. The notebook was 
    jupyter notebook modeling.ipynb
    ```
 
-A full run takes about seven minutes on a 24-core CPU, and longer on a machine with fewer cores
-or one busy with other work. It writes its five figures, the metrics table,
-the table of merged labels and a short model card to `outputs/`, beside the notebook.
+A full run took between 7 and 8 minutes on a 24-core CPU with the notebook's 16 threads, and about
+22 minutes on the same machine when it was busy with another heavy job. It takes longer on a
+machine with fewer cores. It writes its five figures, the metrics table, the table of merged labels
+and a short model card to `outputs/`, beside the notebook.
 
 ## How requirements.txt was created
 
