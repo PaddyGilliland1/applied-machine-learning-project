@@ -21,9 +21,8 @@ Second, `modeling.ipynb` reads that combined file and nothing else. `dft_origina
 evidence for the first step: the 48 originals, unchanged from the publisher, their `MANIFEST.csv`
 and `build_dataset.py`. The notebook does not need the folder to run.
 
-The 48 monthly files from April 2022 to March 2026 are in `dft_originals/`, unchanged from the
-publisher. `dft_originals/MANIFEST.csv` gives each file's month, download URL, encoding, SHA-256,
-size in bytes and number of rows. For six months, September 2024 to February 2025, the listing
+`dft_originals/MANIFEST.csv` gives, for each of the 48 monthly files from April 2022 to March
+2026, its month, download URL, encoding, SHA-256, size in bytes and number of rows. For six months, September 2024 to February 2025, the listing
 links a GOV.UK publication page instead of a file, so the URL given is the file on that page. I
 checked every file against a fresh download from its URL on 9 October 2026.
 
@@ -58,7 +57,8 @@ both.
 
 ## How to run
 
-These steps assume Python 3 and Git are installed.
+These steps assume Python 3.12 or later and Git are installed. The notebook was run on Python
+3.12.3, and the NumPy and SciPy versions in `requirements.txt` need Python 3.12 or later.
 
 1. Clone this repository and move into its folder.
 2. Create and activate a virtual environment:
@@ -82,13 +82,14 @@ These steps assume Python 3 and Git are installed.
    jupyter notebook modeling.ipynb
    ```
 
-A full run takes about seven minutes on a CPU. It writes its five figures, the metrics table,
+A full run takes about seven minutes on a 24-core CPU, and longer on a machine with fewer cores
+or one busy with other work. It writes its five figures, the metrics table,
 the table of merged labels and a short model card to `outputs/`, beside the notebook.
 
 ## How requirements.txt was created
 
-The notebook was run top to bottom in a fresh virtual environment, and the file was then written
-from that environment with:
+The notebook was run top to bottom in a fresh virtual environment with Python 3.12.3, and the
+file was then written from that environment with:
 
 ```bash
 pip freeze > requirements.txt
