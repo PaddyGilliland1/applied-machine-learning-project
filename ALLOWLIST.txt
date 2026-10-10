@@ -4,9 +4,9 @@ README.md
 ALLOWLIST.txt
 requirements.txt
 modeling.ipynb
-build_dataset.py
 dft_spend_over_25k_2022-04_to_2026-03.csv
 dft_originals/MANIFEST.csv
+dft_originals/build_dataset.py
 dft_originals/dft_2022-04.csv
 dft_originals/dft_2022-05.csv
 dft_originals/dft_2022-06.csv

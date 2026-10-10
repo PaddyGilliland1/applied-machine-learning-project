@@ -15,16 +15,23 @@
   <https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/>
 - File: `dft_spend_over_25k_2022-04_to_2026-03.csv`, beside the notebook
 
+The data reaches the notebook in two steps. First, `dft_originals/build_dataset.py` stacks the 48
+original monthly files into the one combined file, `dft_spend_over_25k_2022-04_to_2026-03.csv`.
+Second, `modeling.ipynb` reads that combined file and nothing else. `dft_originals/` holds the
+evidence for the first step: the 48 originals, unchanged from the publisher, their `MANIFEST.csv`
+and `build_dataset.py`. The notebook does not need the folder to run.
+
 The 48 monthly files from April 2022 to March 2026 are in `dft_originals/`, unchanged from the
 publisher. `dft_originals/MANIFEST.csv` gives each file's month, download URL, encoding, SHA-256,
 size in bytes and number of rows. For six months, September 2024 to February 2025, the listing
 links a GOV.UK publication page instead of a file, so the URL given is the file on that page. I
 checked every file against a fresh download from its URL on 9 October 2026.
 
-`build_dataset.py` builds the combined file from them, using only the Python standard library:
+`build_dataset.py` builds the combined file from them, using only the Python standard library.
+From the repository root:
 
 ```bash
-python build_dataset.py
+python dft_originals/build_dataset.py
 ```
 
 It first checks every original against its SHA-256 in the manifest, and stops without writing
@@ -33,9 +40,11 @@ manifest: UTF-8 for January and February 2025, which start with a byte-order mar
 April, July and August 2023, and cp1252 for the other 43 months. The three cp850 files store the
 pound sign as a byte that cp1252 would read as œ. Most files put spaces around some column names,
 and five months name some columns differently, so it maps every header to one set of names. It
-adds a `source_file` column naming the original file of each row. It does not clean, filter or
-reorder anything. The combined file holds all 126,346 rows of the originals, including 657 blank
-rows in May 2022, and the script writes the same bytes on every run.
+adds three columns to each row: `source_file`, naming the original file, `source_encoding`, the
+encoding it read that file with, and `source_header_renamed`, any column it renamed in that file's
+header, written as "published name -> name used". It does not clean, filter or reorder anything.
+The combined file holds all 126,346 rows of the originals, including 657 blank rows in May 2022,
+and the script writes the same bytes on every run.
 
 Contains public sector information licensed under the Open Government Licence v3.0.
 

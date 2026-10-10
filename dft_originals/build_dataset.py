@@ -1,19 +1,23 @@
 """Build the combined dataset file from the 48 original DfT monthly files.
 
-Usage: python build_dataset.py [--originals FOLDER] [--out FILE]
+Usage, from the repository root:
+    python dft_originals/build_dataset.py [--originals FOLDER] [--out FILE]
 
 The Department for Transport publishes its spending over £25,000 as one CSV
 per month. This script stacks the 48 months from April 2022 to March 2026,
-kept unchanged in dft_originals/, into one UTF-8 CSV beside the notebook.
-Before reading any rows it checks every original's SHA-256 and size against
-dft_originals/MANIFEST.csv, and it refuses a missing or extra file. It reads
-each file with the encoding the manifest gives: UTF-8 for January and
-February 2025, cp850 for April, July and August 2023, whose pound sign is
-byte 0x9C, and cp1252 for the rest. It maps the header variants to one set of
-column names, and adds a source_file column naming the original.
-Nothing else changes: no cell is cleaned, no row is dropped (blank rows
-included), and the rows keep their order. The output is the same bytes on
-every run. Standard library only.
+kept unchanged in this folder, dft_originals/, into one UTF-8 CSV in the
+folder above, beside the notebook. That CSV is the only file the notebook
+reads. Before reading any rows it checks every original's SHA-256 and size
+against MANIFEST.csv, and it refuses a missing or extra file. It reads each
+file with the encoding the manifest gives: UTF-8 for January and February
+2025, cp850 for April, July and August 2023, whose pound sign is byte 0x9C,
+and cp1252 for the rest. It maps the header variants to one set of column
+names, and adds three columns to every row: source_file names the original,
+source_encoding the encoding it was read with, and source_header_renamed
+each column renamed in that original's header, as "published name -> schema
+name" joined by "; ", or blank when none was. Nothing else changes: no cell
+is cleaned, no row is dropped (blank rows included), and the rows keep their
+order. The output is the same bytes on every run. Standard library only.
 """
 
 import argparse
@@ -25,10 +29,10 @@ import sys
 import tempfile
 from pathlib import Path
 
-HERE = Path(__file__).resolve().parent
-ORIGINALS = HERE / "dft_originals"
+ORIGINALS = Path(__file__).resolve().parent
 MANIFEST_NAME = "MANIFEST.csv"
 COMBINED_NAME = "dft_spend_over_25k_2022-04_to_2026-03.csv"
+COMBINED = ORIGINALS.parent / COMBINED_NAME
 
 # The column names as 43 of the 48 files have them, once surrounding spaces
 # are stripped.
@@ -44,7 +48,9 @@ SCHEMA = [
     "£",
     "Postal Code",
 ]
-SOURCE_COLUMN = "source_file"
+# The provenance the notebook's file listing needs, written on every row so
+# the notebook reads one file.
+SOURCE_COLUMNS = ["source_file", "source_encoding", "source_header_renamed"]
 
 # The other five files name some columns differently.
 RENAMES = {
@@ -106,6 +112,20 @@ def map_header(raw):
     return mapped
 
 
+def renamed_columns(raw):
+    """Return the columns RENAMES changed in a raw header, as one text value.
+
+    Each is "published name -> schema name", with surrounding spaces
+    stripped, in header order and joined by "; ". A header that needed no
+    rename gives "". The raw list is not changed.
+    """
+    return "; ".join(
+        f"{name.strip()} -> {RENAMES[name.strip()]}"
+        for name in raw
+        if name.strip() in RENAMES
+    )
+
+
 def read_original(path, encoding):
     """Return (header, rows) of one original CSV, decoded strictly.
 
@@ -143,6 +163,7 @@ def build(originals, out):
     for row in manifest:
         header, rows = read_original(originals / row["file"], row["encoding"])
         map_header(header)
+        provenance = [row["file"], row["encoding"], renamed_columns(header)]
         if len(rows) != int(row["rows"]):
             raise ValueError(
                 f"{row['file']}: {len(rows)} data rows read,"
@@ -157,7 +178,7 @@ def build(originals, out):
                 "blank_rows": blank,
             }
         )
-        blocks.append((row["file"], rows))
+        blocks.append((provenance, rows))
 
     out.parent.mkdir(parents=True, exist_ok=True)
     handle, tmp = tempfile.mkstemp(
@@ -166,9 +187,9 @@ def build(originals, out):
     try:
         with os.fdopen(handle, "w", encoding="utf-8", newline="") as fh:
             writer = csv.writer(fh, lineterminator="\r\n")
-            writer.writerow(SCHEMA + [SOURCE_COLUMN])
-            for name, rows in blocks:
-                writer.writerows(cells + [name] for cells in rows)
+            writer.writerow(SCHEMA + SOURCE_COLUMNS)
+            for provenance, rows in blocks:
+                writer.writerows(cells + provenance for cells in rows)
         os.chmod(tmp, 0o644)
         os.replace(tmp, out)
     except BaseException:
@@ -197,7 +218,7 @@ def main(argv=None):
     )
     parser.add_argument(
         "--out",
-        default=str(HERE / COMBINED_NAME),
+        default=str(COMBINED),
         help="combined CSV to write",
     )
     args = parser.parse_args(argv)
