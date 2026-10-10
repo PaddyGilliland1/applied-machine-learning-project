@@ -1,0 +1,3 @@
+# The notebook and the build check every CSV byte for byte, so git never changes their
+# line endings.
+*.csv -text

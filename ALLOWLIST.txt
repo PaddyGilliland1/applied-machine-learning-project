@@ -1,6 +1,7 @@
 # The paths published in this repository, one per line, from the repository root.
 README.md
 .gitignore
+.gitattributes
 ALLOWLIST.txt
 requirements.txt
 modeling.ipynb
