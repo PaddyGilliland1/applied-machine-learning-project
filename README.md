@@ -2,7 +2,7 @@
 
 ## Project description
 
-[TO WRITE: two to four sentences in your own words: what you built and the dataset you used.]
+I built a machine learning model that suggests the general ledger code, the Expense Type, for each Department for Transport spend line over £25,000, using the department's published monthly spending data from April 2022 to March 2026. It uses logistic regression in scikit-learn, and on the six test months it picked the right code for 88.4% of lines in the 50 kept types, against 58.6% for a simple rule based on each supplier's usual code. I propose it as a first release that prepares the coding for a person to approve, because new account codes in 2025 showed it needs monitoring before it posts anything on its own.
 
 ## Dataset
 
