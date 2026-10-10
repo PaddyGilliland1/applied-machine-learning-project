@@ -208,6 +208,11 @@ def build(originals, out):
 
 
 def main(argv=None):
+    """Run the build from the command line.
+
+    Returns 0 when the combined file is written, and 1 when the build is
+    refused.
+    """
     parser = argparse.ArgumentParser(
         description="Build the combined DfT spending CSV."
     )
