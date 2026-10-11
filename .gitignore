@@ -42,3 +42,12 @@ __pycache__/
 Thumbs.db
 
 # PDF files are not ignored: the report PDF is a deliverable.
+
+# The figures, tables and model card the notebook writes on every run. A run rebuilds
+# them, so they stay local unless they are added to ALLOWLIST.txt.
+outputs/
+
+# The dataset: the 48 original monthly files with their manifest, and the combined file built
+# from them by build_dataset.py.
+!dft_originals/*.csv
+!dft_spend_over_25k_2022-04_to_2026-03.csv
